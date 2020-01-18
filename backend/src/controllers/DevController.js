@@ -1,6 +1,7 @@
 const axios = require("axios");
 const Dev = require("../models/Dev");
 const parseStringAsArray = require("../utils/parseStringAsArray");
+const { findConnections, sendMessage } = require('../websocket');
 
 module.exports = {
   async index(req, res) {
@@ -27,7 +28,7 @@ module.exports = {
 
       const techsArr = parseStringAsArray(techs);
 
-      const dev = await Dev.create({
+      dev = await Dev.create({
         github_username,
         name,
         avatar_url,
@@ -35,6 +36,14 @@ module.exports = {
         techs: techsArr,
         location
       });
+
+      //filtrar conexões a no max 10 km de distancia e tecnologias 
+      const sendSocketMessageTo = findConnections(
+        { latitude, longitude},
+        techsArr
+      );
+
+      sendMessage(sendSocketMessageTo, 'dev', dev)
     }
     return res.status(201).json(dev);
   }
