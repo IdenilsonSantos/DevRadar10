@@ -46,8 +46,8 @@ function Main({ navigation }) {
   }, []);
 
   useEffect(() => {
-
-  }, []);
+    subcribeToNewDevs(dev => setDevs([...devs, dev]));
+  }, [devs]);
 
   function setupWebSocket() {
 
